@@ -17,16 +17,16 @@
     linkcolor=blue,
     filecolor=magenta,
     urlcolor=cyan,
+    citecolor=blue, % Changed citecolor to blue as an example
     pdftitle={Heart Disease Prediction},
-    pdfauthor={Priyanka, Shaoib, Anna, Carlos}
+    pdfauthor={Chris, Elnaz, Charly}
 }
 
 \title{Heart Disease Prediction via Comparative Classifier Analysis}
 \author{
-    Priyanka Mukherjee (3400001) \\
-    Shaoib Akhtar (3400002) \\
-    Anna Galadi (3400003) \\
-    Carlos García (3400004)
+    Elnaz Azizi (Matnr einfügen) \\
+    Christian Unterrainer (Matnr einfügen)\\
+    Charly Watts (3422867)
 }
 \date{\today}
 
@@ -46,20 +46,17 @@ Existing solutions for heart disease prediction span a range of machine learning
 This paper contributes by providing a structured comparison of seven distinct classifiers: Logistic Regression, K-Nearest Neighbors, Gaussian Naive Bayes (as baselines), and Random Forest, Gradient Boosting, MLP Classifier, and Support Vector Machines (as more advanced models). We implement a consistent preprocessing pipeline for three UCI Heart Disease datasets (Cleveland, Switzerland, Hungarian) \cite{UCIHeart}. Our core contribution lies in the dual evaluation strategy: 1) Nested Cross-Validation to estimate robust, generalizable F1-scores, and 2) a Threshold Optimization approach on a fixed train/test split to assess peak F1-performance and enable detailed model inspection (e.g., P-R curves, confusion matrices). This comparative evaluation aims to highlight differences in model performance, the impact of evaluation strategy, and the importance of threshold tuning.
 
 \section{Related Work}
-The application of machine learning (ML) techniques for the prediction and diagnosis of heart disease has been an active area of research, aiming to improve clinical decision-making and patient outcomes. Cardiovascular diseases are a leading cause of mortality globally, highlighting the need for accurate predictive instruments \cite{Alkhodari2025}. The UCI Machine Learning Repository's Heart Disease dataset, which includes data from the Cleveland Clinic Foundation, Hungarian Institute of Cardiology, and Swiss University Hospital \cite{UCIHeart}, has served as a common benchmark for these investigations \cite{Jada2024}.
+The application of machine learning (ML) techniques for the prediction and diagnosis of heart disease has been an active area of research, aiming to improve clinical decision-making and patient outcomes. The UCI Machine Learning Repository's Heart Disease dataset, which includes data from the Cleveland Clinic Foundation, Hungarian Institute of Cardiology, and Swiss University Hospital \cite{UCIHeart}, has served as a common benchmark for these investigations. Machine learning libraries such as scikit-learn \cite{scikit-learn} are commonly used for implementing various algorithms.
 
-Traditional ML algorithms such as Logistic Regression (LR), K-Nearest Neighbors (KNN), and Naive Bayes (NB) have been widely applied, often as baseline models. Studies using the Cleveland dataset have shown LR to provide a solid, interpretable baseline \cite{Paul2021}, with reported accuracies varying based on feature sets and preprocessing. KNN's performance has also been explored, with some studies on UCI datasets noting its potential but also its sensitivity to feature selection and the choice of 'k' \cite{Nasution2025eval}. Naive Bayes, despite its strong independence assumptions, has been used for heart disease classification, sometimes achieving reasonable accuracy, particularly after feature optimization \cite{Firdaus2024}. These foundational models often form the basis for comparison against more complex techniques.
+Traditional ML algorithms such as Logistic Regression (LR), K-Nearest Neighbors (KNN), and Naive Bayes (NB) have been widely applied, often as baseline models. Studies using the Cleveland dataset have shown LR to provide a solid, interpretable baseline \cite{Paul2021}. These foundational models often form the basis for comparison against more complex techniques.
 
-Ensemble methods, particularly Random Forests (RF) and Gradient Boosting (GB) machines, are frequently reported to offer improved performance. RF has been shown to perform well on the Cleveland dataset, often cited for its robustness \cite{Pandi2023, Pratama2023}. Gradient Boosting techniques, including XGBoost (a popular variant), have also been applied to UCI heart disease data, demonstrating high accuracy in several studies \cite{Javeed2022, deCatheuGithub}, emphasizing their capacity to model complex patterns. The importance of hyperparameter tuning for these ensemble models is a recurrent theme in the literature to achieve optimal results \cite{Kadhim2023, Subasi2024}.
+Ensemble methods, particularly Random Forests (RF) and Gradient Boosting (GB) machines, are frequently reported to offer improved performance. Techniques like Random Forest and Extreme Gradient Boosting have been applied to the classification of heart disease \cite{Pratama2023}.
 
-Support Vector Machines (SVMs) have been extensively utilized for heart disease classification due to their effectiveness in finding optimal separating hyperplanes. Various studies on the UCI datasets have explored different kernels (linear, RBF, polynomial) and the critical role of tuning parameters like 'C' (regularization) and 'gamma' (for RBF), often achieving competitive accuracies \cite{Dubey2021}.
+Support Vector Machines (SVMs) have been extensively utilized for heart disease classification due to their effectiveness in finding optimal separating hyperplanes. Predicting Heart Disease Based on Influential Features with Machine Learning, including SVMs, has been explored \cite{Dubey2021}.
 
-Neural Networks, including Multi-Layer Perceptrons (MLPs), offer the potential to model non-linear relationships within medical data \cite{ElHasnony2022}. Applications to the UCI heart dataset have shown promising results \cite{BhattacharyyaGithub, KaggleRyanDsouzaMLP}, though MLPs typically require careful tuning of architecture, activation functions, and regularization to perform well and avoid overfitting, especially on datasets of moderate size like Cleveland \cite{Alomar2024}.
-
-Regarding evaluation, while accuracy is widely reported, there's a growing emphasis on metrics like the F1-score (balancing precision and recall), precision, and recall, especially for medical diagnosis where class imbalance can be an issue and the costs of different types of errors vary \cite{EncordF1, LyzrF1, NumberF1}. Robust validation, such as k-fold cross-validation, is standard. Nested Cross-Validation, as employed in this study, is highlighted in literature as a method to obtain a more unbiased estimate of generalization performance when hyperparameter tuning is involved \cite{WickerNestedCV, StackExchangeNestedCV}. Furthermore, the optimization of the decision threshold, rather than relying on a default 0.5, can significantly impact metrics like the F1-score and is crucial for practical model deployment in clinical settings \cite{FuturenseF1}.
+Regarding evaluation, metrics like the F1-score (balancing precision and recall), precision, and recall are important, especially for medical diagnosis where class imbalance can be an issue and the costs of different types of errors vary. Robust validation, such as k-fold cross-validation, is standard. The optimization of the decision threshold can significantly impact metrics like the F1-score.
 
 The present work builds upon this existing body of research by providing a systematic comparison of these seven common classifiers on the Cleveland, Hungarian, and Swiss UCI datasets using a consistent preprocessing pipeline. Our specific contribution lies in the dual evaluation strategy: employing Nested Cross-Validation for robust F1-score estimation and a detailed Threshold Optimization approach to assess peak F1-performance. This allows for a nuanced comparison of model capabilities and the practical implications of different evaluation choices.
-
 
 \section{Methods}
 \textit{[Placeholder: This section is intentionally left out as per your request for this draft. The template suggests detailing the best performing model here. Since your notebook focuses on comparing several models, this might be adapted or merged into the Results/Discussion if you were to write a full paper based on the notebook's current ablation-study style.]}
@@ -166,47 +163,6 @@ Hungarian   & Random Forest        & \textbf{[Value]}    \\
 
 \paragraph{Visualizations:}
 
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[width=0.9\textwidth]{f1-type-dataset-catplot.png} % Example: cm-grid.png
-    \caption{Confusion Matrices for Selected Models on Test Sets (Threshold Optimization Approach).}
-    \label{fig:confusion_matrices_grid}
-\end{figure}
-
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[width=0.75\textwidth]{f1-type-dataset-catplot.png} % Example: pr-curve-cleveland.png
-    \caption{Precision-Recall Curves: Best Baseline vs. Advanced Models on the Cleveland Dataset.}
-    \label{fig:pr_curve_cleveland}
-\end{figure}
-
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[width=0.75\textwidth]{f1-type-dataset-catplot.png} % Example: pr-curve-switzerland.png
-    \caption{Precision-Recall Curves: Best Baseline vs. Advanced Models on the Switzerland Dataset.}
-    \label{fig:pr_curve_switzerland}
-\end{figure}
-
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[width=0.75\textwidth]{f1-type-dataset-catplot.png} % Example: pr-curve-hungarian.png
-    \caption{Precision-Recall Curves: Best Baseline vs. Advanced Models on the Hungarian Dataset.}
-    \label{fig:pr_curve_hungarian}
-\end{figure}
-
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[width=0.8\textwidth]{f1-type-dataset-catplot.png} % Example: f1-type-model-comparison.png
-    \caption{F1-Score Comparison: Nested CV vs. Threshold Optimization (Averaged across datasets for focused models).}
-    \label{fig:f1_type_model_comparison}
-\end{figure}
-
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[width=\textwidth]{f1-type-dataset-catplot.png} % Example: f1-type-dataset-catplot.png
-    \caption{F1-Score Comparison by Evaluation Type and Dataset for Focused Models.}
-    \label{fig:f1_type_dataset_comparison}
-\end{figure}
 
 \paragraph{Limitations:}
 The primary limitations of this study include the relatively small size and significant missing data within the Swiss and Hungarian datasets, which may affect model stability, particularly for complex models. Hyperparameter search grids were not exhaustive due to computational constraints. Threshold optimization was performed on the test set for one evaluation strategy; ideally, a separate validation set would provide a less biased estimate.
@@ -225,9 +181,7 @@ Key findings include:
 
 Limitations revolve around dataset characteristics and tuning scope. Future work could involve advanced imputation, feature engineering, more extensive hyperparameter optimization, and exploring larger datasets or more complex architectures. This work emphasizes the need for robust evaluation in comparative machine learning for medical diagnostics.
 
-\section*{References - Comment}
-\textit{List all the literature cited in the paper in the reference section. Ensure consistency in your citation and referencing style throughout the paper.}
-
+\section*{References}
 \begin{thebibliography}{99}
 
     \bibitem{UCIHeart}
@@ -236,79 +190,14 @@ Limitations revolve around dataset characteristics and tuning scope. Future work
     \bibitem{scikit-learn}
     Pedregosa, F., Varoquaux, G., Gramfort, A., Michel, V., Thirion, B., Grisel, O., et al. (2011). Scikit-learn: Machine learning in Python. \textit{Journal of Machine Learning Research}, 12(Oct), 2825-2830.
 
-    \bibitem{Alkhodari2025}
-    Alkhodari, M., \& Al-dmour, N. (2025). Optimizing heart disease diagnosis with advanced machine learning models: a comparison of predictive performance. \textit{BMC Medical Informatics and Decision Making, 25}(1), 1-16.
-
-    \bibitem{Jada2024}
-    Jada, S. K., Granitz, T., Pascher, M., NimCsovics, T., Szekely, A., \& Kovács, L. (2024). Centralized and Federated Heart Disease Classification Models Using UCI Dataset and their Shapley-value Based Intepretability. \textit{arXiv preprint arXiv:2408.08472}.
-
     \bibitem{Paul2021}
-    Paul, R., \& Aithal, P. S. (2021). Robust Cardiovascular Disease Prediction Using Logistic Regression. \textit{The Journal of Management and Engineering Integration, 14}(1), 26-35.
-
-    \bibitem{Nasution2025eval}
-    Nasution, N., Hasan, M. A., \& Nasution, F. B. (2025). Predicting Heart Disease Using Machine Learning: An Evaluation of Logistic Regression, Random Forest, SVM, and KNN Models on the UCI Heart Disease Dataset. \textit{Journal UIR}.
-    % Illustrative, confirm details
-
-    \bibitem{Firdaus2024}
-    Firdaus, A., Hanafiah, N., \& Anom, D. (2024, November). Heart Disease Prediction Using Classification (Naive Bayes). In \textit{International Conference on Information Technology and Digital Applications (ICITDA)}.
-    % Illustrative, confirm details
-
-    \bibitem{Pandi2023}
-    Pandi, S. S., \& Premalatha, J. (2023). Heart Disease Prediction using Random Forest Based Hybrid Optimization Algorithms. \textit{INASS, 1}(1), 20-29.
+    Paul, R., \& Aithal, P. S. (2021). Robust Cardiovascular Disease Prediction Using Logistic Regression. \textit{The Journal of Management and Engineering Integration}, 14(1), 26-35.
 
     \bibitem{Pratama2023}
-    Pratama, Y. A., Isnanto, R. R., \& Hidayatno, A. (2023). Implementation of Random Forest and Extreme Gradient Boosting in the Classification of Heart Disease using Particle Swarm Optimization Feature Selection. \textit{Journal of Electronics, Electromedical Engineering, and Medical Informatics, 5}(3), 170-178.
-
-    \bibitem{Javeed2022}
-    Javeed, A., Zhou, S., Yong, L., Qasim, I., Noor, A., \& Nour, R. (2022). Cardiovascular disease (CVD) prediction using machine learning techniques with XGBoost feature importance analysis. \textit{International Journal for Multiscale Computational Eng, 20}(5).
-
-    \bibitem{deCatheuGithub}
-    de Catheu, C. (2018). Heart Disease Angiographic Prediction / SVM, Gradient Boosting. GitHub Repository. \url{https://github.com/cyrildecatheu/Heart_Disease_Prediction_SVM_GradientBoosting}
-
-    \bibitem{Kadhim2023}
-    Kadhim, M. A. (2023). Heart disease classification using optimized Machine learning algorithms. \textit{Iraqi Journal for Computer Science and Mathematics, 4}(2), 31-42.
-
-    \bibitem{Subasi2024}
-    Subasi, A., \& Ciylan, B. (2024). Hyperparameter-Tuned Machine Learning Model for Accurate Prediction of Heart Disease. \textit{Journal of Healthcare Engineering, 2024}.
+    Pratama, Y. A., Isnanto, R. R., \& Hidayatno, A. (2023). Implementation of Random Forest and Extreme Gradient Boosting in the Classification of Heart Disease using Particle Swarm Optimization Feature Selection. \textit{Journal of Electronics, Electromedical Engineering, and Medical Informatics}, 5(3), 170-178.
 
     \bibitem{Dubey2021}
-    Dubey, A. K., Choudhary, K., \& Sharma, R. (2021). Predicting Heart Disease Based on Influential Features with Machine Learning. \textit{Journal of Computer Science and Technology, 36}(4), 185-197.
-
-    \bibitem{ElHasnony2022}
-    El-Hasnony, I. M., El-Bakry, H. M., \& Taha, M. H. N. (2022). MLP-PSO Hybrid Algorithm for Heart Disease Prediction. \textit{Journal of Healthcare Engineering, 2022}.
-
-    \bibitem{BhattacharyyaGithub}
-    Bhattacharyya, P. (n.d.). Heart\_Attack\_Prediction: Heart-Disease Prediction Model using TensorFlow on UCI Dataset. GitHub Repository. \url{https://github.com/PiyushKBhattacharyya/Heart_Attack_Prediction}
-
-    \bibitem{KaggleRyanDsouzaMLP}
-    Dsouza, R. (2020). Heart Disease Prediction using Neural Networks. Kaggle Notebook. \url{https://www.kaggle.com/code/ryandsouza/heart-disease-prediction-using-neural-networks}
-
-    \bibitem{Alomar2024}
-    Alomar, M. K., \& Aljumah, A. A. (2024). Classification and Prediction of Heart Diseases using Machine Learning Algorithms. \textit{arXiv preprint arXiv:2409.03040}.
-
-    \bibitem{EncordF1}
-    Encord. (2023). F1 Score Metric in Machine Learning Explained. \textit{Encord Blog}.
-    % Placeholder: Find actual URL
-
-    \bibitem{LyzrF1}
-    Lyzr AI. (n.d.). F1 Score in Machine Learning. \textit{Lyzr AI Blog}.
-    % Placeholder: Find actual URL
-
-    \bibitem{NumberF1}
-    Number Analytics. (2025). F1 Score: The Ultimate Metric for ML Success. \textit{Number Analytics Blog}.
-    % Placeholder: Find actual URL
-
-    \bibitem{WickerNestedCV}
-    Wicker, E. (2021). Nested cross-validation. \textit{ethanwicker.com blog}.
-    % Placeholder: Find actual URL or academic equivalent
-
-    \bibitem{StackExchangeNestedCV}
-    Dikran Marsupial. (2024). Why use nested validation when doing both hyper-parameter tuning and model selection?. \textit{Cross Validated (Stack Exchange)}.
-    % Placeholder: Find actual URL
-
-    \bibitem{FuturenseF1}
-    Futurense. (2025). F1 Score in Machine Learning: Formula, Range \& Interpretation. \textit{Futurense Blog}.
-    % Placeholder: Find actual URL
+    Dubey, A. K., Choudhary, K., \& Sharma, R. (2021). Predicting Heart Disease Based on Influential Features with Machine Learning. \textit{Journal of Computer Science and Technology}, 36(4), 185-197.
 
 \end{thebibliography}
 
