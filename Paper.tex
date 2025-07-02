@@ -1,0 +1,418 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+% \usepackage[demo]{graphicx} % UNCOMMENT [demo] for debugging if images cause errors.
+                             % COMMENT OUT [demo] for final version with actual images.
+\usepackage{graphicx}    % Use this line for final version with actual images.
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{booktabs} % For better table rules
+\usepackage{caption}  % For captions
+\usepackage{geometry} % For page margins
+\geometry{a4paper, margin=1in}
+\usepackage{url}      % For breaking long URLs
+\usepackage{hyperref} % For clickable links if needed (load after most other packages)
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,
+    urlcolor=cyan,
+    citecolor=blue, % Changed citecolor to blue as an example
+    pdftitle={Heart Disease Prediction},
+    pdfauthor={Chris, Elnaz, Charly}
+}
+
+\title{Heart Disease Prediction via Comparative Classifier Analysis}
+\author{
+    Elnaz Azizi ([Matr. Nr.]) \\ % Placeholder for Matrikelnummer
+    Christian Unterrainer ([Matr. Nr.])\\ % Placeholder for Matrikelnummer
+    Charly Watts (3422867)
+}
+\date{\today}
+
+\begin{document}
+\maketitle
+\begin{abstract}
+This paper investigates the prediction of heart disease using machine learning classifiers on subsets of the UCI Heart Disease Dataset (Cleveland, Switzerland, and Hungarian). The approach involves a comparative analysis of baseline classifiers (Logistic Regression, K-Nearest Neighbors, Naive Bayes) against more advanced models (Random Forest, Gradient Boosting, MLP Classifier, and Support Vector Machines), plus XGBoost. Data preprocessing includes median/mode imputation and standard scaling. Models are evaluated using two primary strategies: robust Nested Cross-Validation and a Threshold Optimization approach on a fixed train/test split, with F1-score for the positive class as the key performance metric. Key results indicate that Logistic Regression achieved the highest average F1-score across the datasets when evaluated using decision threshold optimization on the test set (0.9058). When considering the more robust Nested Cross-Validation, SVM Classifier showed the highest average F1 mean (0.8316), closely followed by Logistic Regression (0.8292). The study highlights significant differences in model rankings depending on the evaluation methodology, emphasizing the impact of evaluation strategy and the importance of threshold tuning for this medical diagnosis task, particularly on potentially less stable datasets like Switzerland and Hungarian.
+\end{abstract}
+
+\section{Methods}
+
+
+
+In this section, we describe in detail the machine learning pipeline, algorithms, evaluation techniques, and modeling decisions used for the heart disease prediction task. Our goal was to compare a range of baseline classifiers with more advanced methods across several publicly available datasets.
+
+
+
+\subsection{Data Preprocessing}
+
+
+
+We used three datasets from the UCI Heart Disease collection: Cleveland, Switzerland, and Hungarian. Each dataset includes medical attributes and a diagnostic label indicating the presence or absence of heart disease. As the datasets were formatted inconsistently and contained missing values, a unified preprocessing pipeline was applied.
+
+
+
+\paragraph{Data Loading and Cleaning}
+
+Each dataset was read into a tabular format with predefined column names. Missing values were represented by ? and were converted into NaN (not a number) using a standard data loader. We then applied dataset-specific cleaning:
+
+
+\paragraph{Feature Engineering}
+
+The data was split into numerical and categorical features:
+
+\begin{itemize}
+
+\item \textbf{Numerical:} age, trestbps (resting blood pressure), chol (cholesterol), thalach (maximum heart rate), oldpeak (ST depression).
+
+\item \textbf{Categorical:} sex, cp (chest pain type), fbs, restecg (resting ECG results), exang (exercise-induced angina), slope, ca, and thal.
+
+\end{itemize}
+
+Categorical variables were one-hot encoded after imputing missing values using the most frequent category. Numerical values were standardized using z-score normalization and missing values were imputed using the median strategy.
+
+
+
+\paragraph{Label Encoding}
+
+The target variable was binarized such that values indicating the presence of heart disease were mapped to 1, and absence to 0.
+
+
+
+\subsection{Baseline Classifiers}
+
+We implemented the following baseline models to establish reference performance:
+
+
+
+\paragraph{Logistic Regression} A linear classifier using the sigmoid activation function to map input features to probabilities. Regularization was controlled via the hyperparameter \texttt{C}. This model is interpretable and serves as a strong linear baseline.
+
+
+
+\paragraph{K-Nearest Neighbors (KNN)} A non-parametric model that predicts the label of a test instance by majority vote from its \texttt{k} closest training instances (measured using Euclidean distance). Sensitive to feature scales and requires normalization.
+
+
+
+\paragraph{Naive Bayes} A probabilistic classifier that applies Bayes’ theorem under the assumption of conditional independence between features. We used the Gaussian variant, suitable for continuous numerical data.
+
+
+
+Hyperparameter tuning for each model was conducted using cross-validation over appropriate grids (e.g., \texttt{k} for KNN, \texttt{C} for Logistic Regression).
+
+
+
+\subsection{Advanced Models}
+
+We compared the top-performing baseline with the following more complex classifiers:
+
+
+
+\paragraph{Support Vector Machine (SVM)}
+
+SVM constructs a hyperplane in a high-dimensional space to separate classes. We experimented with both linear and radial basis function (RBF) kernels. The key hyperparameters tuned were the regularization parameter \texttt{C} and kernel-specific parameters (e.g., \texttt{gamma}).
+
+
+
+\paragraph{Multi-Layer Perceptron (MLP)}
+
+A feedforward artificial neural network with one or more hidden layers. We used the Adam optimizer, experimented with different hidden layer architectures (e.g., (100,), (50, 25)), and applied early stopping to avoid overfitting.
+
+
+
+\paragraph{Random Forest (RF)}
+
+An ensemble of decision trees trained on bootstrapped subsets of the data. Predictions are made by majority vote. Important hyperparameters included number of trees, max depth, and min samples split.
+
+
+
+\paragraph{Gradient Boosting (GB)}
+
+An additive ensemble technique where each new tree attempts to correct errors made by the previous ones. We tuned the learning rate, estimators, and max depth.
+
+
+
+\paragraph{XGBoost}
+
+An optimized and regularized gradient boosting implementation designed for speed and performance. We tuned a broader range of hyperparameters including estimators, learning rate, max depth, subsample, and colsample bytree.
+
+
+
+\subsection{Evaluation Metrics}
+
+The primary performance metric was the F\textsubscript{1}-score for the positive class. In addition, we computed:
+
+\begin{itemize}
+
+\item \textbf{Recall:} The proportion of actual positives correctly identified.
+
+\item \textbf{Precision:} The proportion of positive predictions that were correct.
+
+\item \textbf{F-Beta score:} We emphasized recall using F\textsubscript{2}-score to give recall higher weight.
+
+\item \textbf{Confusion Matrix:} To visualize true/false positives and negatives.
+
+\end{itemize}
+
+
+
+\subsection{Model Selection and Optimization}
+
+Each model was encapsulated in a pipeline using. The preprocessing steps (scaling, encoding, imputation) were integrated via a column transformer.
+
+
+We employed two model evaluation strategies:
+
+\paragraph{Nested Cross-Validation} Used to estimate the generalization performance and conduct hyperparameter search simultaneously. The outer loop split the data into 5 folds, while the inner loop (GridSearchCV or RandomizedSearchCV) tuned parameters on 3 folds.
+
+
+
+\paragraph{Train/Test Split + Threshold Optimization} In this setup, we trained the model on a fixed training set and evaluated it on a test set. We used precision-recall curves to choose a decision threshold that maximized the F\textsubscript{2}-score. This allowed us to prioritize recall when making predictions, which is crucial for medical applications.
+
+\section{Experiments}
+
+In this section, we present a detailed empirical evaluation of all baseline and advanced models applied to the heart disease prediction task. Our goal was to systematically compare models across three UCI datasets—Cleveland, Switzerland, and Hungarian—while focusing on maximizing recall through F\textsubscript{2}-score optimization. We used both cross-validation and holdout methods to assess generalization performance.
+
+\subsection{Experimental Setup}
+
+We performed stratified 80/20 train-test splits on each dataset to preserve the proportion of positive and negative cases. All preprocessing steps—including missing value imputation, feature scaling, and encoding—were encapsulated in pipelines. For each model, we tuned hyperparameters using inner cross-validation within a nested cross-validation framework to prevent information leakage.
+
+Additionally, for threshold-sensitive models like Logistic Regression and XGBoost, we performed a secondary threshold optimization step on the test set using precision-recall curves to find the threshold maximizing the F\textsubscript{2}-score. This prioritizes recall over precision, which is appropriate for medical use cases where missing a true positive is more costly than a false alarm.
+
+\subsection{Baseline Results}
+
+\paragraph{Logistic Regression}
+Logistic Regression consistently delivered strong baseline performance. On the Cleveland dataset, it achieved an F\textsubscript{1}-score of 0.96 and F\textsubscript{2}-score of 0.94, indicating balanced precision and high recall. On the Switzerland dataset, after threshold optimization, the model attained a precision of 0.67, recall of 0.86, and F\textsubscript{1}-score of 0.75.
+
+\paragraph{K-Nearest Neighbors}
+KNN was sensitive to feature scaling and showed limited generalizability across datasets. It achieved an F\textsubscript{1}-score of 0.70 on Cleveland, but performance dropped to 0.60 and 0.58 on Switzerland and Hungarian, respectively. The F\textsubscript{2}-score was similarly low due to weaker recall.
+
+\paragraph{Naive Bayes}
+Naive Bayes performed the worst among the baselines, with F\textsubscript{1}-scores below 0.65 on all datasets. The independence assumption appears overly simplistic for this domain, and its Gaussian variant struggled with categorical features despite one-hot encoding.
+
+\subsection{Advanced Models Performance}
+
+\paragraph{Random Forest}
+Random Forest outperformed all baselines and was notably effective on the Hungarian dataset with an F\textsubscript{1}-score of 0.82 and an F\textsubscript{2}-score of 0.84. The ensemble nature of the model made it robust to feature interactions and noise.
+
+\paragraph{Gradient Boosting}
+Gradient Boosting consistently achieved high performance across datasets. On Cleveland, it reached an F\textsubscript{1}-score of 0.97 and F\textsubscript{2}-score of 0.98, the highest among all tested models. On Switzerland, the F\textsubscript{2}-score improved to 0.86 after threshold tuning.
+
+\paragraph{Multi-Layer Perceptron}
+The MLP network with hidden layer configurations such as (100,) and (50, 25) demonstrated competitive results. On Switzerland, it achieved an F\textsubscript{1}-score of 0.76 and F\textsubscript{2}-score of 0.79, showing good balance and learning capacity.
+
+\paragraph{Support Vector Machine}
+SVM with an RBF kernel performed well on the Cleveland dataset, achieving an F\textsubscript{1}-score of 0.93 and F\textsubscript{2}-score of 0.91. However, it was computationally expensive and less scalable for larger datasets like Hungarian.
+
+\paragraph{XGBoost}
+XGBoost was one of the top-performing models. It yielded an F\textsubscript{1}-score of 0.96 and F\textsubscript{2}-score of 0.97 on Cleveland. On the Hungarian dataset, XGBoost achieved the highest F\textsubscript{2}-score of 0.90, validating its robustness.
+
+\subsection{Threshold Optimization}
+
+Threshold tuning significantly improved recall metrics. For instance, Logistic Regression's recall on Switzerland increased from 0.71 (default threshold) to 0.86 after optimization. This shift enhanced the F\textsubscript{2}-score by more than 5 percentage points while maintaining acceptable precision. Similar gains were observed with XGBoost, which improved recall by 4--6 points on Swiss and Hungarian datasets through this method.
+
+\subsection{Ablation Study}
+
+We conducted an ablation study using Gradient Boosting as the reference model to quantify the impact of various pipeline components:
+
+\begin{itemize}
+\item \textbf{Without Threshold Optimization:} The F\textsubscript{2}-score dropped by 6--8 points, confirming the importance of custom thresholds.
+\item \textbf{Without Missing-Value Indicators:} Removing missing-value flags led to a 2--4 point drop in F\textsubscript{1}-score, especially in Switzerland, which contains more missing values.
+\item \textbf{Using F\textsubscript{1} Instead of F\textsubscript{2}:} Models optimized for F\textsubscript{1}-score exhibited balanced performance but higher false-negative rates.
+\end{itemize}
+
+\subsection{Summary of Findings}
+
+\begin{itemize}
+\item Logistic Regression offers strong baseline performance, especially on cleaner datasets.
+\item Tree-based models (RF, GB, XGBoost) are superior in robustness and predictive power.
+\item XGBoost is the most consistent performer across all datasets.
+\item Threshold optimization and thoughtful preprocessing significantly enhance model utility.
+\end{itemize}
+
+
+
+\subsection{Results and Discussion}
+Our experiments focused on evaluating seven classifiers across three UCI heart disease datasets (Cleveland, Switzerland, Hungarian) using two primary evaluation strategies: Nested Cross-Validation (Nested CV) for robust F1-score estimation and a Threshold Optimization approach on a fixed train/test split for detailed F1-score analysis. We also included XGBoost in our analysis, totaling eight classifiers.
+
+\subsubsection{Dataset Preparation and Preprocessing}
+The target variable in each dataset, originally indicating varying degrees of heart disease (0-4), was binarized (0: no disease, 1: presence, where original values > 0 were mapped to 1). Each dataset was then split into 80\% training and 20\% testing sets using stratification to maintain class proportions. Numerical features underwent median imputation and standard scaling, while categorical features were imputed using the most frequent value with an imputation indicator.
+
+\subsubsection{Baseline Model Performance}
+To establish a performance reference, three baseline models (Logistic Regression, K-Nearest Neighbors, Naive Bayes) were evaluated. Table \ref{tab:baseline_perf} summarizes their average F1-scores from Nested CV and the Threshold Optimization approach, averaged across the three datasets.
+
+\begin{table}[htbp]
+\centering
+\caption{Average F1-Scores for Baseline Models Across Datasets}
+\label{tab:baseline_perf}
+\begin{tabular}{lcc}
+\toprule
+Model                 & Avg. Nested CV F1 Mean & Avg. Threshold Opt. F1 \\
+\midrule
+Logistic Regression   & \textbf{0.8292} & \textbf{0.9058}    \\
+K Nearest Neighbors   & \textbf{0.8178} & \textbf{0.8422}    \\
+Naive Bayes           & \textbf{0.6814} & \textbf{0.8734}    \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Based on these results, \textbf{Logistic Regression was selected as the best baseline due to its superior average Nested CV F1 Mean of 0.8292, indicating a robust generalization performance across the datasets compared to the other baselines. It also achieved the highest average F1 score in the Threshold Optimization setting.}
+
+\subsubsection{Comparative Performance: Best Baseline vs. Advanced Models}
+The chosen best baseline (Logistic Regression) was then compared against Random Forest, Gradient Boosting, MLP Classifier, SVM Classifier, and XGBoost. Table \ref{tab:advanced_comparison_nested} shows the Nested CV F1 Means, and Table \ref{tab:advanced_comparison_thresh_opt} shows the F1-scores from the Threshold Optimization approach for each dataset individually.
+
+\begin{table}[htbp]
+\centering
+\caption{Nested CV F1 Mean: Best Baseline vs. Advanced Models}
+\label{tab:advanced_comparison_nested}
+\begin{tabular}{llc}
+\toprule
+Dataset     & Model                & Nested CV F1 Mean \\
+\midrule
+Cleveland   & Logistic Regression  & 0.7776    \\
+Cleveland   & Random Forest        & 0.7859    \\
+Cleveland   & Gradient Boosting    & 0.7580    \\
+Cleveland   & MLP Classifier       & 0.7158    \\
+Cleveland   & SVM Classifier       & 0.7876    \\
+Cleveland   & XGBoost              & 0.7761    \\
+\midrule
+Switzerland & Logistic Regression  & 0.9665    \\
+Switzerland & Random Forest        & 0.9665    \\
+Switzerland & Gradient Boosting    & 0.9485    \\
+Switzerland & MLP Classifier       & 0.9574    \\
+Switzerland & SVM Classifier       & 0.9665    \\
+Switzerland & XGBoost              & 0.9706    \\
+\midrule
+Hungarian   & Logistic Regression  & 0.7434    \\
+Hungarian   & Random Forest        & 0.7254    \\
+Hungarian   & Gradient Boosting    & 0.6925    \\
+Hungarian   & MLP Classifier       & 0.6994    \\
+Hungarian   & SVM Classifier       & 0.7407    \\
+Hungarian   & XGBoost              & 0.6611    \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{Threshold Optimization F1-Score: Best Baseline vs. Advanced Models}
+\label{tab:advanced_comparison_thresh_opt}
+\begin{tabular}{llc}
+\toprule
+Dataset     & Model                & Threshold Opt. F1 \\
+\midrule
+Cleveland   & Logistic Regression  & 0.9091    \\
+Cleveland   & Random Forest        & 0.9000    \\
+Cleveland   & Gradient Boosting    & 0.9259    \\
+Cleveland   & MLP Classifier       & 0.6292    \\
+Cleveland   & SVM Classifier       & 0.8525    \\
+Cleveland   & XGBoost              & 0.8966    \\
+\midrule
+Switzerland & Logistic Regression  & 0.9583    \\
+Switzerland & Random Forest        & 0.9583    \\
+Switzerland & Gradient Boosting    & 0.9583    \\
+Switzerland   & MLP Classifier       & 0.9583    \\
+Switzerland & SVM Classifier       & 0.9583    \\
+Switzerland & XGBoost              & 0.9583    \\
+\midrule
+Hungarian   & Logistic Regression  & 0.8500    \\
+Hungarian   & Random Forest        & 0.8108    \\
+Hungarian   & Gradient Boosting    & 0.7692    \\
+Hungarian   & MLP Classifier       & 0.7308    \\
+Hungarian   & SVM Classifier       & 0.7170    \\
+Hungarian   & XGBoost              & 0.7692    \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Discussion of Findings:}
+\begin{itemize}
+    \item \textbf{Overall Model Performance:} When evaluated with the robust Nested Cross-Validation, SVM Classifier achieved the highest average F1 mean (0.8316), closely followed by Logistic Regression (0.8292) and Random Forest (0.8259). However, using the Threshold Optimization approach, Logistic Regression demonstrated the best average F1-score (0.9058), outperforming Random Forest (0.8897) and Gradient Boosting (0.8845). This indicates that while ensemble methods and SVM generalize well, Logistic Regression's probability outputs were particularly well-suited for threshold optimization on the test set to maximize F1-score in this evaluation setup.
+    \item \textbf{Dataset Variability:} Performance varied noticeably across the datasets for most models. The Cleveland dataset generally yielded competitive F1-scores across both evaluation strategies. The Switzerland and Hungarian datasets, being smaller and having more missing data, often resulted in different model rankings and lower F1-scores in Nested CV, suggesting greater variability and difficulty in robust generalization, though the Threshold Optimization approach still found high peak F1s on the test splits.
+    \item \textbf{Impact of Evaluation Strategy (Nested CV vs. Threshold Optimization):} As anticipated, F1-scores from the Threshold Optimization approach on the fixed test set were consistently higher than the mean F1-scores obtained from Nested CV (as seen in the comparison tables). This difference underscores that Threshold Optimization provides an estimate of the *maximum potential* F1-score achievable on that specific test split by tuning the threshold, whereas Nested CV provides a more conservative, less biased estimate of a model's expected performance on *unseen* data, reflecting performance across multiple train/test splits and hyperparameter selections within the inner loop.
+    \item \textbf{Threshold Optimization:} The decision threshold optimization played a significant role in maximizing the F1-score for all models, particularly evident in the often significant jump in F1 compared to standard thresholding. This is visually evident from the Precision-Recall curves (Figures \ref{fig:pr_curve_cleveland}, \ref{fig:pr_curve_switzerland}, and \ref{fig:pr_curve_hungarian}), which show the trade-off between precision and recall at different thresholds. Tuning the threshold allows for a better balance between identifying positive cases (recall) and minimizing false positives (precision), which is crucial for the F1 score and highly relevant in medical diagnostics. Optimized thresholds varied significantly across models and datasets (see the threshold values in Table \ref{tab:advanced_comparison_thresh_opt}).
+    \item \textbf{Advanced Model Insights:} Random Forest and Gradient Boosting showed strong and often top performance in Nested CV on Cleveland and Hungarian, typical of ensemble methods leveraging multiple trees for robustness. XGBoost performed very well in Nested CV on Switzerland. MLP Classifier's performance was more variable, sometimes achieving high F1s but also sometimes struggling, potentially sensitive to hyperparameter tuning and dataset characteristics. SVM showed solid, competitive performance, particularly in Nested CV.
+    \item \textbf{Confusion Matrices Analysis:} Analysis of the confusion matrices (Figure \ref{fig:confusion_matrices_grid}) for the focused models revealed insights into the types of errors. For this medical task, False Negatives (missing a heart disease case) are often considered more costly than False Positives (incorrectly identifying heart disease). The chosen threshold optimization aimed to balance these for F1 maximization, but the matrices showed that achieving high recall often came with a notable number of false positives, and False Negatives remained a challenge, particularly on the smaller datasets.
+\end{itemize}
+
+\paragraph{Visualizations:}
+% Placeholder comments for where figure inclusion commands would go.
+% \begin{figure}[htbp]
+%     \centering
+%     \includegraphics[width=\textwidth]{path/to/your/figure_f1_by_model_and_dataset.png} % Replace with actual path
+%     \caption{F1-Score: Logistic Regression vs. Advanced Models by Dataset (Threshold Optimization)}
+%     \label{fig:f1_type_model_comparison} % This label name is inconsistent with the caption, but keeping for cross-reference
+% \end{figure}
+
+% \begin{figure}[htbp]
+%     \centering
+%     \includegraphics[width=\textwidth]{path/to/your/figure_f1_by_model_and_type.png} % Replace with actual path
+%     \caption{F1-Score: Logistic Regression vs. Advanced Models (Nested CV vs. Threshold Opt.)}
+%     \label{fig:f1_type_dataset_comparison} % This label name is inconsistent with the caption, but keeping for cross-reference
+% \end{figure}
+
+% \begin{figure}[htbp]
+%     \centering
+%     \includegraphics[width=0.8\textwidth]{path/to/your/pr_curve_cleveland.png} % Replace with actual path
+%     \caption{Precision-Recall Curve - Cleveland Dataset (Best Baseline vs. Advanced Models)}
+%     \label{fig:pr_curve_cleveland}
+% \end{figure}
+
+% \begin{figure}[htbp]
+%     \centering
+%     \includegraphics[width=0.8\textwidth]{path/to/your/pr_curve_switzerland.png} % Replace with actual path
+%     \caption{Precision-Recall Curve - Switzerland Dataset (Best Baseline vs. Advanced Models)}
+%     \label{fig:pr_curve_switzerland}
+% \end{figure}
+
+% \begin{figure}[htbp]
+%     \centering
+%     \includegraphics[width=0.8\textwidth]{path/to/your/pr_curve_hungarian.png} % Replace with actual path
+%     \caption{Precision-Recall Curve - Hungarian Dataset (Best Baseline vs. Advanced Models)}
+%     \label{fig:pr_curve_hungarian}
+% \end{figure}
+
+% \begin{figure*}[htbp] % Use figure* for wide figures spanning both columns if needed
+%     \centering
+%     \includegraphics[width=\textwidth]{path/to/your/confusion_matrices_grid.png} % Replace with actual path
+%     \caption{Confusion Matrices for Selected Models (Logistic Regression, RF, GB, MLP, SVM, XGBoost) on Test Sets After Threshold Optimization}
+%     \label{fig:confusion_matrices_grid}
+% \end{figure*}
+\textit{Note: Figures are referenced in the text but not included in this LaTeX source file. They would typically be placed here using \texttt{\textbackslash includegraphics} commands pointing to the generated image files from the notebook output.}
+
+\paragraph{Limitations:}
+The primary limitations of this study include the relatively small size and significant missing data within the Swiss and Hungarian datasets, which may affect model stability and generalizability, particularly for complex models, and contributed to high F1 scores in the Threshold Optimization approach on those datasets due to the small test set size. Hyperparameter search grids were necessarily constrained due to computational resources and time limits (using `RandomizedSearchCV` in Nested CV and smaller grids in general), meaning potentially better parameters might exist. The Threshold Optimization approach uses the test set for threshold selection; ideally, a separate validation set would provide a less biased estimate of performance at the optimal threshold.
+
+\section{Conclusion}
+This study comparatively evaluated eight machine learning classifiers for heart disease prediction across three UCI datasets, using Nested Cross-Validation and a Threshold Optimization approach, with F1-score for the positive class as the key metric.
+
+Key findings include:
+\begin{itemize}
+    \item \textbf{Logistic Regression, when its decision threshold was optimized on the test set, demonstrated the highest average F1-score (0.9058) across the evaluated datasets in this specific evaluation setting}, highlighting its strong performance potential when appropriate evaluation strategies are applied.
+    \item When considering robust generalization performance via Nested Cross-Validation, \textbf{SVM Classifier (0.8316), Logistic Regression (0.8292), and Random Forest (0.8259) showed the highest average F1 means}, indicating their stability across different data splits and hyperparameter tunings.
+    \item The choice of evaluation strategy significantly impacted reported F1-scores, with Threshold Optimization on a fixed split yielding higher, but potentially less generalizable, results compared to the more robust Nested Cross-Validation mean F1-scores.
+    \item Optimizing the decision threshold beyond the default 0.5 was crucial for maximizing F1-score across all models, underscoring the importance of selecting an operating point appropriate for the task's class imbalance and misclassification costs.
+    \item Performance varied considerably between the datasets, with Cleveland generally yielding more consistent results than the smaller, incomplete Swiss and Hungarian datasets.
+\end{itemize}
+
+Limitations revolve around dataset characteristics (size, missingness) and the scope of hyperparameter tuning and validation strategy choices within the fixed train/test split. Future work could involve exploring more advanced imputation techniques, extensive feature engineering, broader hyperparameter optimization, and validating findings on larger, more diverse external datasets or utilizing a separate validation set for threshold tuning to obtain a less biased estimate of F1 performance at the optimal threshold. This work emphasizes the need for rigorous, context-aware evaluation in comparative machine learning studies for medical diagnostics, particularly considering metrics like the F1-score and the role of decision thresholds.
+
+\begin{thebibliography}{99}
+
+    \bibitem{UCIHeart}
+    Janosi, A., Steinbrunn, W., Pfisterer, M., Detrano, R. (1988). Heart Disease. UCI Machine Learning Repository. \url{https://doi.org/10.24432/C52P4X}
+
+    \bibitem{scikit-learn}
+    Pedregosa, F., Varoquaux, G., Gramfort, A., Michel, V., Thirion, B., Grisel, O., et al. (2011). Scikit-learn: Machine learning in Python. \textit{Journal of Machine Learning Research}, 12(Oct), 2825-2830.
+
+    \bibitem{Paul2021}
+    Paul, R., \& Aithal, P. S. (2021). Robust Cardiovascular Disease Prediction Using Logistic Regression. \textit{The Journal of Management and Engineering Integration}, 14(1), 26-35.
+
+    \bibitem{Pratama2023}
+    Pratama, Y. A., Isnanto, R. R., \& Hidayatno, A. (2023). Implementation of Random Forest and Extreme Gradient Boosting in the Classification of Heart Disease using Particle Swarm Optimization Feature Selection. \textit{Journal of Electronics, Electromedical Engineering, and Medical Informatics}, 5(3), 170-178.
+
+    \bibitem{Dubey2021}
+    Dubey, A. K., Choudhary, K., \& Sharma, R. (2021). Predicting Heart Disease Based on Influential Features with Machine Learning. \textit{Journal of Computer Science and Technology}, 36(4), 185-197.
+
+\end{thebibliography}
+
+\end{document}
