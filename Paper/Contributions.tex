@@ -1,0 +1,69 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{titlesec}
+
+\titleformat{\section}{\normalfont\Large\bfseries}{}{0pt}{}
+\titleformat{\subsection}{\normalfont\large\bfseries}{}{0pt}{}
+
+\title{\textbf{Project Contribution Report}}
+\author{Elnaz Azizi, Charly Watts, Christian Unterrainer}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section*{Team Contributions Overview}
+
+The following outlines the individual contributions of each team member to the project. All members participated actively and collaboratively in meetings and feedback discussions.
+
+\section*{Elnaz Azizi (\texttt{GitHub: Elnaazi, Matrnr: 3434538})}
+
+\begin{itemize}[leftmargin=1.5em]
+    \item Organized initial project meetings.
+    \item Implemented machine learning classifiers: Naive Bayes, Random Forest, and XGBoost.
+    \item Researched and evaluated additional classification models, with a focus on optimizing performance using XGBoost.
+    \item Applied data imputation strategies to effectively handle missing values.
+    \item Focused on performance optimization by integrating F1-threshold tuning to improve classification quality
+    \item Incorporated improvements based on professor's feedback (notably imputation techniques).
+    \item Responsible for writing the \textit{Methods} section of the paper (implementation description).
+\end{itemize}
+
+\section*{Charly Watts (\texttt{GitHub: BytebenderCoco, Matrnr: 3422867})}
+
+\begin{itemize}[leftmargin=1.5em]
+    \item Initiated the project and coordinated progress and team meetings.
+    \item Created and managed the GitHub repository and uploaded relevant data files.
+    \item Implemented machine learning classifiers: k-Nearest Neighbors (k-NN) and Multi-Layer Perceptron (MLP).
+    \item Refactored and structured the main notebook for improved code readability and visualization.
+    \item Adjusted dataset splitting based on feedback.
+    \item Interpreted professor feedback and defined corresponding tasks.
+    \item Conducted hyperparameter tuning for model optimization.
+    \item Resolved technical issues (e.g., XGBoost warnings).
+    \item Standardized the F2-score computation within the notebook.
+    \item Organized the structure and formatting of the paper (language and template).
+    \item Contributed content to the paper, including \textit{Related Work}, tables, and citations.
+    \item Authored the remaining sections of the paper, including the \textit{Introduction}, \textit{Conclusion}, and others.
+\end{itemize}
+
+\section*{Christian Unterrainer (\texttt{GitHub: cunterrainer, Matrnr: 3430428})}
+
+\begin{itemize}[leftmargin=1.5em]
+    \item Proposed the original project idea with a focus on Health/Heart Disease.
+    \item Implemented code components and supported experimental workflows.
+    \item Merged baseline classifiers into a single notebook and streamlined the process by adding pipelines.
+    \item Implemented machine learning classifiers: Logistic regression and the support vector machine (SVM)
+    \item Carried out experiments based on professor feedback, including:
+    \begin{itemize}
+        \item Implemented emphasizing Recall over the F1-score.
+        \item Comparing model performance by tuning parameters e.g. tree counts for random forest or XGBoost.
+        \item Investigating the impact of columns with significant missing values by trying to remove them and merging all dataset into a larger single dataset.
+    \end{itemize}
+    \item Reported and documented the results of all experiments.
+    \item Responsible for writing the \textit{Experiments} section of the paper (experiment setup, results, discussion) and the contribution paper.
+\end{itemize}
+
+\end{document}
